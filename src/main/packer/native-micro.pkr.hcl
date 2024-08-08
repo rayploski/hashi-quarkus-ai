@@ -1,7 +1,7 @@
 # Define variables
 variable "repository" {
   type        = string
-  default     = "hashi-ray/hashi-quarkus"
+  default     = "hashicorp.com/hashi-quarkus"
   description = "The Docker repository where the image will be stored"
 }
 
@@ -35,8 +35,9 @@ source "docker" "quarkus" {
 }
 
 build {
-  name    = "quarkus-micro-image"
+  name    = "hashi-quarkus"
   sources = ["source.docker.quarkus"]
+  description = "Simple Quarkus application for use with the HashiCorp technology stack."
 
   # Provisioner to run shell commands inside the Docker container
   provisioner "shell" {
