@@ -46,6 +46,7 @@ release.properties
 **/terraform.tfstate
 **/terraform.tfstate.backup
 *.tfstate.lock.info
+**/.terraform.lock.hcl
 
 # Terraform Variables
 *.tfvars
