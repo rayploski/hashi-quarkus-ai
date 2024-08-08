@@ -7,11 +7,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t quarkus/ai-demo .
+# docker build -f src/main/docker/Dockerfile.native -t hashicorp.com/hashi-demo .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/ai-demo
+# docker run -i --rm -p 8080:8080 hashicorp.com/hashidemo
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.6
@@ -25,4 +25,3 @@ EXPOSE 8080
 USER 1001
 
 CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
-~
