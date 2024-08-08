@@ -1,0 +1,58 @@
+# Create an AWS Container Registry to hold the packaged build for access by ECS
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.61.0"
+    }
+  }
+}
+
+
+provider "aws" {
+  # Configuration options
+  region = var.aws_region
+}
+
+resource "aws_ecr_repository" "repo" {
+  name = var.app_name
+  force_delete = true
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+# Policy to remove older versions of untagged_images
+resource "aws_ecr_lifecycle_policy" "default_policy" {
+  repository = aws_ecr_repository.repo.name
+
+  policy = <<EOF
+	{
+	    "rules": [
+	        {
+	            "rulePriority": 1,
+	            "description": "Keep only the last ${var.untagged_images} untagged images.",
+	            "selection": {
+	                "tagStatus": "untagged",
+	                "countType": "imageCountMoreThan",
+	                "countNumber": ${var.untagged_images}
+	            },
+	            "action": {
+	                "type": "expire"
+	            }
+	        }
+	    ]
+	}
+	EOF
+}
+
+output "ecr_url" {
+  value = aws_ecr_repository.repo.repository_url
+}
+
+output "aws_repo" {
+  value = split("/", aws_ecr_repository.repo.repository_url)[0]
+}
+
+
