@@ -1,76 +1,21 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = ">= 5.61.0"
-    }
-
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = ">=3.0.2"
     }
   }
 }
-
-variable "app_name" {
-  type = string
-  default = "hashi-quarkus"
-  description = "The name of the application."
-}
-
-variable "aws_region" {
-  type        = string
-  default     = "us-west-2"
-  description = "The AWS region where resources will be created. Default is set to US West (Oregon) region."
-}
-
-variable "aws_availability_zone_1" {
-  type        = string
-  default     = "us-west-2a"
-  description = "The first Availability Zone within the specified AWS region. Default is set to us-west-2a in the US West (Oregon) region."
-}
-
-variable "aws_availability_zone_2" {
-  type        = string
-  default     = "us-west-2b"
-  description = "The second Availability Zone within the specified AWS region. Default is set to us-west-2b in the US West (Oregon) region."
-}
-
-/*---------------------------------------------------------------------------------------------------------------*/
 
 provider "aws" {
   # Configuration options
   region = var.aws_region
 }
 
-
-provider "docker" {
-  registry_auth {
-    address = data.aws_ecr_authorization_token.ecr_token.proxy_endpoint
-    username = data.aws_ecr_authorization_token.ecr_token.user_name
-    password = data.aws_ecr_authorization_token.ecr_token.password
-  }
-}
-
-
-resource "aws_ecr_repository" "quarkus-repo" {
-  name = "quarkus-repo"
-  force_delete = true
-
-}
-
-# get authorization credentials to push to ecr
-data "aws_ecr_authorization_token" "ecr_token" {}
-
 resource "aws_default_vpc" "default-vpc"{
   tags = {
     Name="Default Vpc"
   }
-}
-
-# push image to ecr repo
-resource "docker_registry_image" "media-handler" {
-  name = docker_image
 }
 
 resource "aws_default_subnet" "default-subnet-1" {
