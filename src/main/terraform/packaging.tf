@@ -1,7 +1,7 @@
 resource "null_resource" "docker_packaging" {
 
   provisioner "local-exec" {
-    working_dir = "../../../.."
+    working_dir = "../../.."
     command     = <<EOF
 	    aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${split("/", aws_ecr_repository.repo.repository_url)[0]}
         docker build -t ${aws_ecr_repository.repo.repository_url} -f src/main/docker/Dockerfile.native -t ${var.ecr_app_name}:latest .
