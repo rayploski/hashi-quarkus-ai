@@ -60,8 +60,8 @@ resource "aws_security_group" "alb-sg" {
 
 # Create a security group for the Fargate Service
 resource "aws_security_group" "fargate-sg" {
-  description = "sg for the Fargate Service"
-  name        = "fargate-sg"
+  description = "sg for the ${var.app_name} Fargate Service"
+  name        = "${var.app_name}-fargate-sg"
   vpc_id      = aws_default_vpc.default-vpc.id
 
   ingress {
@@ -96,7 +96,7 @@ data "aws_iam_policy_document" "ecs-assume-role-policy" {
 
 # IAM role for Fargate execution
 resource "aws_iam_role" "fargate-execution" {
-  name = "fargate-execution-role"
+  name = "${var.app_name}-fargate-execution-role"
 
   assume_role_policy = data.aws_iam_policy_document.ecs-assume-role-policy.json
 
@@ -124,7 +124,7 @@ resource "aws_iam_role" "fargate-execution" {
 
 # IAM role for Fargate with S3 permissions
 resource "aws_iam_role" "fargate-s3-role" {
-  name = "fargate-s3-role"
+  name = "${var.app_name}-fargate-s3-role"
 
   assume_role_policy = data.aws_iam_policy_document.ecs-assume-role-policy.json
 
@@ -147,7 +147,7 @@ resource "aws_iam_role" "fargate-s3-role" {
 
 # Create an Application Load Balancer
 resource "aws_lb" "alb-for-fargate" {
-  name               = "alb-for-quarkus"
+  name               = "alb-for-${var.app_name}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
@@ -169,13 +169,13 @@ resource "aws_lb_target_group" "alb-tg-fargate" {
 # Create a target group for JVM Lambda
 resource "aws_lb_target_group" "alb-tg-jvmLambda" {
   target_type = "lambda"
-  name        = "jvmLambdaTg"
+  name        = "jvmLambdaTg-for-${var.app_name}"
 }
 
 # Create a target group for Native Lambda
 resource "aws_lb_target_group" "alb-tg-nativeLambda" {
   target_type = "lambda"
-  name        = "nativeLambdaTg"
+  name        = "nativeLambdaTg-for-${var.app_name}"
 }
 
 # Create a listener for the ALB
@@ -219,7 +219,7 @@ resource "aws_lb_listener_rule" "direct-to-native" {
 
 # CloudWatch log group for Quarkus backend
 resource "aws_cloudwatch_log_group" "quarkus-backend-logs" {
-  name = "quarkus-backend"
+  name = var.app_name
 }
 
 # S3 bucket for storing user data
@@ -250,8 +250,8 @@ resource "aws_ecs_task_definition" "quarkus-task" {
   network_mode = "awsvpc"
   container_definitions = jsonencode([
     {
-      name = "hashi-quarkus"
-      image = "YOUR_ECR_URL_HERE"
+      name = var.app_name
+      image = var.aws_ecr_repo_url
       cpu = 512
       memory = 2048
       essential = true
@@ -264,33 +264,20 @@ resource "aws_ecs_task_definition" "quarkus-task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group = "hashi-quarkus"
+          awslogs-group = var.app_name
           awslogs-region = var.aws_region
           awslogs-stream-prefix = "quarkus-container"
         }
       }
-      /*
-     logConfiguration =  [
-       {
-         logDriver = "awslogs"
-         options = {
-           awslogs-group = "hashi-quarkus"
-           awslogs-region = var.aws_region
-           awslogs-stream-prefix = "quarkus-container"
-         }
-       }
-     ]
-
-       */
     }
   ])
 }
 
 resource "aws_ecs_cluster" "quarkus-cluster" {
-  name = "quarkus-cluster"
+  name = "${var.app_name}-cluster"
 }
 resource "aws_ecs_service" "quarkus-service" {
-  name            = "quarkus-service"
+  name            = "${var.app_name}-service"
   cluster         = aws_ecs_cluster.quarkus-cluster.id
   task_definition = aws_ecs_task_definition.quarkus-task.arn
   desired_count   = 1
@@ -303,7 +290,7 @@ resource "aws_ecs_service" "quarkus-service" {
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.alb-tg-fargate.arn
-    container_name   = "hashi-quarkus"
+    container_name   = var.app_name
     container_port   = 8080
   }
 

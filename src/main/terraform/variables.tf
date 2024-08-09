@@ -21,3 +21,8 @@ variable "aws_availability_zone_2" {
   default     = "us-west-2b"
   description = "The second Availability Zone within the specified AWS region. Default is set to us-west-2b in the US West (Oregon) region."
 }
+
+variable "aws_ecr_repo_url" {
+  type = string
+  description = "The URL of the ECR repo. You can get it the output from 00-build-and-package"
+}
