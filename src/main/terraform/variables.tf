@@ -22,7 +22,13 @@ variable "aws_availability_zone_2" {
   description = "The second Availability Zone within the specified AWS region. Default is set to us-west-2b in the US West (Oregon) region."
 }
 
-variable "aws_ecr_repo_url" {
-  type = string
-  description = "The URL of the ECR repo. You can get it the output from 00-build-and-package"
+variable "untagged_images" {
+  default = 3
+  description = "It's a good practice to remove unused docker images - ECR will delete any versions older than untagged_images"
+}
+
+variable "ecr_app_name" {
+  type        = string
+  description = "Name of the application  to be packaged for deployment. This will appear within the ECR  repository and will be used to tag the Docker image."
+  default     = "hashicorp.com/hashi-quarkus"
 }

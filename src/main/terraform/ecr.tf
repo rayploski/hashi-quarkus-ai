@@ -1,22 +1,7 @@
 # Create an AWS Container Registry to hold the packaged build for access by ECS
 
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.61.0"
-    }
-  }
-}
-
-
-provider "aws" {
-  # Configuration options
-  region = var.aws_region
-}
-
 resource "aws_ecr_repository" "repo" {
-  name = var.app_name
+  name = var.ecr_app_name
   force_delete = true
   image_scanning_configuration {
     scan_on_push = true

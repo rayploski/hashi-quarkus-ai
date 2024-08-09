@@ -251,7 +251,7 @@ resource "aws_ecs_task_definition" "quarkus-task" {
   container_definitions = jsonencode([
     {
       name = var.app_name
-      image = var.aws_ecr_repo_url
+      image = aws_ecr_repository.repo.repository_url
       cpu = 512
       memory = 2048
       essential = true
@@ -293,6 +293,5 @@ resource "aws_ecs_service" "quarkus-service" {
     container_name   = var.app_name
     container_port   = 8080
   }
-
 
 }
