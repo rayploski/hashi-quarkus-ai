@@ -32,8 +32,6 @@ resource "aws_ecr_lifecycle_policy" "default_policy" {
 	EOF
 }
 
-output "aws_repo" {
-  value = split("/", aws_ecr_repository.repo.repository_url)[0]
-}
+
 
 

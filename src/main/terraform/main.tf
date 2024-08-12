@@ -1,16 +1,4 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 5.61.0"
-    }
-  }
-}
 
-provider "aws" {
-  # Configuration options
-  region = var.aws_region
-}
 
 resource "aws_default_vpc" "default-vpc"{
   tags = {
@@ -82,17 +70,7 @@ resource "aws_security_group" "fargate-sg" {
   }
 }
 
-# IAM policy document for ECS assume role
-data "aws_iam_policy_document" "ecs-assume-role-policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
 
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
 
 # IAM role for Fargate execution
 resource "aws_iam_role" "fargate-execution" {
@@ -263,8 +241,4 @@ resource "aws_ecs_service" "quarkus-service" {
   }
 
 
-}
-
-output "app_url" {
-  value = aws_lb.alb-for-fargate.dns_name
 }
