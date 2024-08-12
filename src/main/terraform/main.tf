@@ -14,14 +14,14 @@ provider "aws" {
 
 resource "aws_default_vpc" "default-vpc"{
   tags = {
-    Name="Default Vpc"
+    Name="${var.app_name}-vpc"
   }
 }
 
 resource "aws_default_subnet" "default-subnet-1" {
   availability_zone = var.aws_availability_zone_1
   tags = {
-    Name = "Default subnet for AZ1"
+    Name = "subnet-1-${var.app_name}"
   }
 }
 
@@ -29,14 +29,14 @@ resource "aws_default_subnet" "default-subnet-2" {
   availability_zone = var.aws_availability_zone_2
 
   tags = {
-    Name = "Default subnet for AZ2"
+    Name = "subnet-2-${var.app_name}"
   }
 }
 
 # Create a security group for the ALB
 resource "aws_security_group" "alb-sg" {
-  description = "sg for the ALB"
-  name        = "alb-sg"
+  description = "sg for the ${var.app_name} ALB"
+  name        = "${var.app_name}-alb-sg"
   vpc_id      = aws_default_vpc.default-vpc.id
 
   ingress {
@@ -152,6 +152,14 @@ resource "aws_lb" "alb-for-fargate" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb-sg.id]
   subnets            = [aws_default_subnet.default-subnet-1.id, aws_default_subnet.default-subnet-2.id]
+
+/*
+  access_logs {
+    bucket  = aws_s3_bucket.s3.id
+    prefix  = "alb"
+    enabled = true
+  }
+*/
 }
 
 # Create a target group for the ALB
@@ -166,18 +174,6 @@ resource "aws_lb_target_group" "alb-tg-fargate" {
   }
 }
 
-# Create a target group for JVM Lambda
-resource "aws_lb_target_group" "alb-tg-jvmLambda" {
-  target_type = "lambda"
-  name        = "jvmLambdaTg-for-${var.app_name}"
-}
-
-# Create a target group for Native Lambda
-resource "aws_lb_target_group" "alb-tg-nativeLambda" {
-  target_type = "lambda"
-  name        = "nativeLambdaTg-for-${var.app_name}"
-}
-
 # Create a listener for the ALB
 resource "aws_lb_listener" "fargate-listener" {
   load_balancer_arn = aws_lb.alb-for-fargate.arn
@@ -189,47 +185,19 @@ resource "aws_lb_listener" "fargate-listener" {
   }
 }
 
-# Listener rule to direct traffic to JVM Lambda
-resource "aws_lb_listener_rule" "direct-to-jvm" {
-  listener_arn = aws_lb_listener.fargate-listener.arn
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.alb-tg-jvmLambda.arn
-  }
-  condition {
-    path_pattern {
-      values = ["/jvm/lambda*"]
-    }
-  }
-}
-
-# Listener rule to direct traffic to Native Lambda
-resource "aws_lb_listener_rule" "direct-to-native" {
-  listener_arn = aws_lb_listener.fargate-listener.arn
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.alb-tg-nativeLambda.arn
-  }
-  condition {
-    path_pattern {
-      values = ["/native/lambda*"]
-    }
-  }
-}
-
 # CloudWatch log group for Quarkus backend
 resource "aws_cloudwatch_log_group" "quarkus-backend-logs" {
   name = var.app_name
 }
 
 # S3 bucket for storing user data
-resource "aws_s3_bucket" "users-bucket" {
-  bucket = "hashi-users"
+resource "aws_s3_bucket" "s3" {
+  bucket = var.app_name
 }
 
 # Enable versioning on the S3 bucket
 resource "aws_s3_bucket_versioning" "users-bucket-versioning" {
-  bucket = aws_s3_bucket.users-bucket.id
+  bucket = aws_s3_bucket.s3.id
 
   versioning_configuration {
     status = "Enabled"
@@ -294,4 +262,9 @@ resource "aws_ecs_service" "quarkus-service" {
     container_port   = 8080
   }
 
+
+}
+
+output "app_url" {
+  value = aws_lb.alb-for-fargate.dns_name
 }
