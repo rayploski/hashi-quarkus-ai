@@ -1,6 +1,6 @@
 # hashi-quarkus Project
 
-This project is a simple Quarkus app that can be packaged and deployed to AWS with HashiCorp tooling.
+This project is a simple template Quarkus app that can be packaged and deployed to the clouds with HashiCorp tooling.
 
 If you want to learn more check out:
 - HashiCorp: https://developer.hashicorp.com
