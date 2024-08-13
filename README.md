@@ -1,11 +1,27 @@
-# hashi-quarkus Project
+# hashi-quarkus-ai Project
 
-This project is a simple template Quarkus app that can be packaged and deployed to the clouds with HashiCorp tooling.
+This project is a simple AI app that can be packaged and deployed to the clouds with HashiCorp tooling. This application
+demonstrates an AI-infused chatbot application using Quarkus, LangChain4j, Infinispan, and multiple LLMs on
+various cloud service providers.
 
-If you want to learn more check out:
-- HashiCorp: https://developer.hashicorp.com
-- Quarkus: https://quarkus.io/ .
+## Prerequisites
 
+- Java 21 or later
+- Apache Maven 3.9.6 or later
+- Podman or Docker (Podman recommended)
+- Granite available using Podman Desktop (AI studio) or InstructLab
+
+*IMPORTANT:* Update the LLM URL in the `application.properties` to match your Granite LLM URL.
+
+## Running the Demo
+
+To run the demo, navigate to the `4-rag` directory and run `mvn quarkus:dev`.
+
+```
+> mvn quarkus:dev
+```
+
+The UI is available at `http://localhost:8080`.
 
 ## Running the application in dev mode
 
@@ -56,11 +72,9 @@ You can then execute your native executable with: `./target/hashi-quarkus-1.0.0-
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
-## Provided Code
 
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
+If you want to learn more check out:
+- HashiCorp: https://developer.hashicorp.com
+- Quarkus: https://quarkus.io/ .
+- LangChain4J: https://docs.langchain4j.dev/
+- InstructLab: https://instructlab.ai/
