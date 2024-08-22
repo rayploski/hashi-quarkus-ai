@@ -31,25 +31,19 @@
   <dependencies>
     <!-- AI -->
     <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-openai</artifactId>
-      <version>0.15.1</version>
-    </dependency>
-    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-websockets-next</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.quarkiverse.langchain4j</groupId>
-      <artifactId>quarkus-langchain4j-infinispan</artifactId>
-      <version>0.15.1</version>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>0.33.0</version>
     </dependency>
     <dependency>
       <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-embeddings-bge-small-en-q</artifactId>
-      <version>0.31.0</version>
+      <artifactId>langchain4j-bedrock</artifactId>
+      <version>0.33.0</version>
     </dependency>
-
 
     <dependency>
       <groupId>io.quarkus</groupId>

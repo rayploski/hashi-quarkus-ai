@@ -5,6 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+
 @Path("/hello")
 public class GreetingResource {
 
@@ -13,4 +14,7 @@ public class GreetingResource {
     public String hello() {
         return "Hello from Quarkus REST";
     }
+
+
+
 }

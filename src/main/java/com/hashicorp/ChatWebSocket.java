@@ -7,13 +7,10 @@ import jakarta.inject.Inject;
 
 @WebSocket(path = "/chat")
 public class ChatWebSocket {
-
     @Inject ChatBot bot;
 
     @OnOpen
-    String welcome() {
-        return "Welcome, my name is Mona, how can I help you today?";
-    }
+    String welcome() {return "Welcome, how can I help you today?";}
 
     @OnTextMessage
     String onMessage(String message) {

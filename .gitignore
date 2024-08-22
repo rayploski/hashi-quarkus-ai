@@ -88,3 +88,6 @@ tests/*.auto.tfvars
 
 # Generated private key
 *.key
+
+# AWS Specific AccessID and Key
+aws.env
